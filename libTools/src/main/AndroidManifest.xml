@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pretty.library.tools">
+
+    <application>
+
+        <provider
+            android:name=".ContextProvider"
+            android:authorities="${applicationId}.tools-installer"
+            android:exported="false"
+            android:multiprocess="true" />
+
+    </application>
+</manifest>

@@ -1,0 +1,3 @@
+include ':libTools'
+include ':app'
+rootProject.name = "ToolsLib"
