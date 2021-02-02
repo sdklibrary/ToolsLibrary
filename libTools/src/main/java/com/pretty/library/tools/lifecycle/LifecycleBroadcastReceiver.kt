@@ -15,7 +15,7 @@ import androidx.lifecycle.OnLifecycleEvent
 class LifecycleBroadcastReceiver(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
-    private val receiver: (context: Context?, intent: Intent?) -> Unit
+    private val receiver: (intent: Intent?) -> Unit
 ) : BroadcastReceiver(), LifecycleObserver {
 
     init {
@@ -23,7 +23,7 @@ class LifecycleBroadcastReceiver(
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        receiver.invoke(context, intent)
+        receiver.invoke(intent)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

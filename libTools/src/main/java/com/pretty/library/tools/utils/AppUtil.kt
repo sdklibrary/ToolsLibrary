@@ -187,8 +187,7 @@ object AppUtil {
      * @author Arvin.xun
      */
     fun isGpsEnabled(mContext: Context): Boolean {
-        val lm =
-            mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val lm = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
@@ -259,10 +258,10 @@ object AppUtil {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         intent.addCategory(Intent.CATEGORY_BROWSABLE)
-        try{
+        try {
             context.startActivity(Intent.createChooser(intent, title))
             result?.invoke(200)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             result?.invoke(404)
         }
     }

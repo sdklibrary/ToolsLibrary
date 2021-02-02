@@ -3,6 +3,7 @@ package com.pretty.library.tools.helper
 import android.Manifest.permission
 import android.content.Context
 import android.location.*
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.MainThread
@@ -21,13 +22,9 @@ class LocationHelper private constructor(
     private val criteria: Criteria?
 ) : LiveData<Pair<Int, Address?>>() {
 
-    private val handler by lazy {
-        Handler(Looper.myLooper()!!)
-    }
+    private val handler = Handler(Looper.myLooper()!!)
 
-    private val locationManager by lazy {
-        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    }
+    private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     @Suppress(names = ["MissingPermission"])
     private val timeTask = Runnable {
@@ -35,13 +32,24 @@ class LocationHelper private constructor(
         value = Pair(100, null)
     }
 
-    private val listener by lazy {
-        object : LocationListener {
-            @RequiresPermission(anyOf = [permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION])
-            override fun onLocationChanged(location: Location) {
-                locationManager.removeUpdates(this)
-                decodeLocation(location)
-            }
+    private val listener  = object : LocationListener {
+
+        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+
+        }
+
+        override fun onProviderEnabled(provider: String) {
+
+        }
+
+        override fun onProviderDisabled(provider: String) {
+
+        }
+
+        @RequiresPermission(anyOf = [permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION])
+        override fun onLocationChanged(location: Location) {
+            locationManager.removeUpdates(this)
+            decodeLocation(location)
         }
     }
 
@@ -58,13 +66,16 @@ class LocationHelper private constructor(
         }.let {
             locationManager.getBestProvider(it, true) ?: LocationManager.NETWORK_PROVIDER
         }
-        val location = locationManager.getLastKnownLocation(provider)
-        if (location != null)
-            decodeLocation(location)
-        else {
-            locationManager.requestLocationUpdates(provider, 0, 0f, listener)
-            handler.postDelayed(timeTask, timeOut)
-        }
+        if(locationManager.isProviderEnabled(provider)) {
+            val location = locationManager.getLastKnownLocation(provider)
+            if (location != null)
+                decodeLocation(location)
+            else {
+                locationManager.requestLocationUpdates(provider, 0, 0f, listener)
+                handler.postDelayed(timeTask, timeOut)
+            }
+        }else
+            value = Pair(404, null)
     }
 
     @Suppress(names = ["MissingPermission"])
